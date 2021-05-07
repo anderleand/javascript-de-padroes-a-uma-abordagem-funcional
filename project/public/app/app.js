@@ -1,11 +1,8 @@
-import { handleStatus, log } from './utils/promise-helpers.js'
+import { log } from './utils/promise-helpers.js'
+import './utils/array-helpers.js'
+import { notasService as service } from './notas/service.js'
 
-document.querySelector('#myButton').onclick = () => fetch('http://localhost:3000/notas')
-    .then(handleStatus)
-    .then(notas => notas.reduce((array, nota) => array.concat(nota.itens), []))
+document.querySelector('#myButton').onclick = () => service
+    .sumItems('2143')
     .then(log)
-    .then(itens => itens.filter(item => item.codigo == '2143'))
-    .then(log)
-    .then(itens => itens.reduce((total, item) => total + item.valor, 0))
-    .then(console.log)
-    .catch(console.log)
+    .catch(log);
