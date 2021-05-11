@@ -1,7 +1,8 @@
-import { log } from './utils/promise-helpers.js'
+import { log, retry, timeoutPromise } from './utils/promise-helpers.js'
 import './utils/array-helpers.js'
 import { notasService as service } from './notas/service.js'
 import { takeUntil, debounceTime, partialize, pipe } from './utils/operators.js'
+import { EventEmitter } from './utils/event-emitter.js'
 
 const operations = pipe(
     partialize(takeUntil, 3),
@@ -9,9 +10,9 @@ const operations = pipe(
 );
 
 const action = operations(() =>
-    service
-        .sumItems('2143')
-        .then(log)
+    retry(3, 3000, () =>
+        timeoutPromise(200, service.sumItems('2143')))
+        .then(total => EventEmitter.emit('itensTotalizados', total))
         .catch(log)
 );
 
